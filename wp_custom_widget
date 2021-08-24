@@ -4,6 +4,11 @@
  *
  * @return void
  */
+ function industrial_register_widget() {
+	register_widget( 'industrial_widget_1' );
+	}
+add_action( 'widgets_init', 'industrial_register_widget' );
+
 class industrial_widget_1 extends WP_Widget {
 	function __construct() {
 	parent::__construct( 'industrial_widget_1', __('Industrial Archive Posts Widget', ' industrial_widget_domain'),
