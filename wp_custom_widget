@@ -1,0 +1,69 @@
+<?php
+/**
+ * Custom widget archive posts register functions
+ *
+ * @return void
+ */
+class industrial_widget_1 extends WP_Widget {
+	function __construct() {
+	parent::__construct( 'industrial_widget_1', __('Industrial Archive Posts Widget', ' industrial_widget_domain'),
+	array( 'description' => __( 'Industrial Widget element', 'industrial_widget_domain' ), ) );
+	}
+	
+	public function widget( $args, $instance ) {
+	$title = apply_filters( 'widget_title', $instance['title'] );
+	echo $args['before_widget'];
+	
+	if ( ! empty( $title ) )
+	echo $args['before_title'] . $title . $args['after_title'];
+
+
+    global $wpdb;
+    $limit = 0;
+    $year_prev = null;
+    $months = $wpdb->get_results("SELECT DISTINCT MONTH( post_date ) AS month ,  YEAR( post_date ) AS year, COUNT( id ) as post_count FROM $wpdb->posts WHERE post_status = 'publish' and post_date <= now( ) and post_type = 'post' GROUP BY month , year ORDER BY post_date DESC");
+    foreach($months as $month) :
+        $year_current = $month->year;
+        if ($year_current != $year_prev){
+            if ($year_prev != null){?>          
+            <?php } ?>      
+        
+        <li class="archive-year">
+            <a href="<?php bloginfo('url') ?>/<?php echo $month->year; ?>/"><?php echo $month->year; ?></a>
+        </li>      
+        <?php } ?>
+
+        <li>
+            <a href="<?php bloginfo('url') ?>/<?php echo $month->year; ?>/<?php echo date("m", mktime(0, 0, 0, $month->month, 1, $month->year)) ?>">
+                <span class="archive-month"><?php echo date_i18n("F Y", mktime(0, 0, 0, $month->month, 1, $month->year)) ?></span>
+            </a>
+        </li>
+    
+    <?php
+    $year_prev = $year_current;  
+    if(++$limit >= 18) { break; }  
+    endforeach;
+
+	
+	echo $args['after_widget'];
+	}
+
+	public function form( $instance ) {
+	if ( isset( $instance[ 'title' ] ) )
+	$title = $instance[ 'title' ];
+	else
+	$title = __( 'Default Title', 'industrial_widget_domain' );
+	?>
+	<p>
+	<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+	</p>
+	<?php
+	}
+
+	public function update( $new_instance, $old_instance ) {
+	$instance = array();
+	$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+	return $instance;
+	}
+}
