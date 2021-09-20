@@ -58,6 +58,7 @@ add_filter( 'comment_form_defaults', 'placeholder_comment_form_field' );
 function workhouse_remove_comment_fields($arg) {
     $arg['url'] = '';
     $arg['cookies'] = '';
+    //$arg['comment'] = ''; er add_filter hobe comment_form_fields
     return $arg;
 }
 add_filter('comment_form_default_fields', 'workhouse_remove_comment_fields');
