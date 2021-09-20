@@ -1,0 +1,63 @@
+/**
+ * Move up to down comment fields 
+ */
+function workhouse_move_comment_field_to_bottom( $fields ) {
+	$comment_field = $fields['comment'];
+	unset( $fields['comment'] );
+	$fields['comment'] = $comment_field;
+	return $fields;
+	}
+add_filter( 'comment_form_fields', 'workhouse_move_comment_field_to_bottom'); 
+
+
+/**
+ * Add custom class fields to the default comment form
+ */ 
+function custom_fields($fields) {
+
+    $commenter = wp_get_current_commenter();
+    $req = get_option( 'require_name_email' );
+    $aria_req = ( $req ? " aria-required='true'" : ’ );
+
+    $fields[ 'author' ] = '<p class="comment-form-author">'.
+      '<label for="author">' . __( 'Name' ) . '</label>'.
+      ( $req ? '<span class="required">*</span>' : ’ ).
+      '<input id="author" name="author" type="text" value="'. esc_attr( $commenter['comment_author'] ) .
+      '" size="30" tabindex="1"' . $aria_req . ' /></p>';
+
+    $fields[ 'email' ] = '<p class="comment-form-email">'.
+      '<label for="email">' . __( 'Email' ) . '</label>'.
+      ( $req ? '<span class="required">*</span>' : ’ ).
+      '<input id="email" name="email" type="text" value="'. esc_attr( $commenter['comment_author_email'] ) .
+      '" size="30"  tabindex="2"' . $aria_req . ' /></p>';
+
+    $fields[ 'phone' ] = '<p class="comment-form-phone">'.
+      '<label for="phone">' . __( 'Phone' ) . '</label>'.
+      '<input id="phone" name="phone" type="text" size="30"  tabindex="4" /></p>';
+
+  return $fields;
+}
+add_filter('comment_form_default_fields', 'custom_fields');
+
+/**
+ * Comment field Form add Comment custom field
+ */
+function placeholder_comment_form_field($fields) {
+    $replace_comment = __('Your Comment', 'workhouse');
+     
+    $fields['comment_field'] = '<div class="mb-3"><label class="form-label" for="comment">' . _x( 'Comment', 'noun' ) .
+    '</label><textarea id="comment" class="form-control" name="comment" cols="45" rows="8" placeholder="'.$replace_comment.'" aria-required="true"></textarea></div>';
+    
+    return $fields;
+ }
+add_filter( 'comment_form_defaults', 'placeholder_comment_form_field' );
+
+/**
+ * Comment Form any fields remove
+ */
+function workhouse_remove_comment_fields($arg) {
+    $arg['url'] = '';
+    $arg['cookies'] = '';
+    return $arg;
+}
+add_filter('comment_form_default_fields', 'workhouse_remove_comment_fields');
