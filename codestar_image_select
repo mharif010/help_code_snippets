@@ -1,0 +1,191 @@
+/* ---------------------------------------------------------
+            Header Menu selection
+    --------------------------------------------------------- */
+    CSF::createSection($prefix, array(
+        'title'   => __('Menu selection', 'solarwind'),
+        'icon'    => 'fas fa-plus-circle',
+        'fields'  => array(
+
+            array(
+                'id' => 'menu_select',
+                'type' => 'image_select',
+                'title' => esc_html__('Select Menu','bizbond'),
+                'options' => array(
+                    'menu_one' => get_template_directory_uri(). '/lib/codestar-framework/assets/images/menu-one.png',
+                    'menu_two' => get_template_directory_uri(). '/lib/codestar-framework/assets/images/menu-two.png',
+                ),
+                'default' => 'menu_one'
+            ),
+        )
+    ));
+    
+    
+ 
+ //here show this options in frontend website.
+    
+<?php
+	if($config['menu_select'] === 'menu_one'){   
+?>
+
+<!-- Header info start -->
+<?php
+	if($config['header_top_on_off']){
+?>
+<div id="header-info">
+	<div class="header-top"
+	
+	
+	
+	
+	style="background-image: url(
+            
+            <?php 
+                $config = get_option('solarwind'); 
+                echo $solarwind['header_top_bg_color'];
+            ?>)">
+	
+	
+	
+	
+	>
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-9 col-md-10">
+					<div class="header-top-left">
+						<ul class="d-lg-flex d-md-flex">
+							<?php if($config['header_phone']) { ?>
+								<li>
+									<p><i class="<?php echo $config['header_phone_icon']; ?>"></i> <?php echo $config['header_phone']; ?></p>
+								</li>
+							<?php } ?>
+							<?php if($config['header_email']) { ?>
+								<li>
+									<p><i class="<?php echo $config['header_email_icon']; ?>"></i> <?php echo $config['header_email']; ?></p>
+								</li>
+							<?php } ?>
+							<?php if($config['header_location']) { ?>
+								<li>
+									<p><i class="<?php echo $config['header_location_icon']; ?>"></i> <?php echo $config['header_location']; ?></p>
+								</li>
+							<?php } ?>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-2">
+					<div class="header-top-right xs-mt-10">
+						<ul class="d-flex justify-content-lg-end justify-content-center">
+							<?php
+								if($header_socials = $config['header_icons']){
+									foreach( $header_socials as $header_social){
+								?>
+									<li><a href="<?php echo $header_social['social_link']; ?>"><i class="<?php echo $header_social['social_icon']; ?>"></i></a></li>
+								<?php
+									}
+								}else{
+									echo " ";
+								}
+							?>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php
+	}
+?>
+<!-- Header info end -->
+
+<!-- Header start -->
+<header class="header-area">
+	<div class="container">
+		<div class="row align-items-center">
+			<div class="col-lg-3 col-md-3 col-6">
+				<div class="logo-wrapper">
+					<?php
+                            if($logo = $config['header_logo']){
+                        ?>
+
+                        <a href="<?php echo site_url(); ?>" class="logo">
+                            <img src="<?php echo $logo['url']; ?>" alt="">
+                        </a>
+                    <?php
+                        }else{
+                            echo "logo";
+                        }
+                    ?>
+				</div>
+			</div>
+			<div class="col-lg-9 col-md-9 col-6">
+				<div class="header-content  d-flex justify-content-end">
+
+					<a class="header-toggle-menu" href="#0" title="Menu"><i class="fa fa-bars"></i></a>
+
+					<?php
+						wp_nav_menu(array(
+							'theme_location'    => 'main_menu',
+							'container'         => 'nav',
+							'container_class'   => 'header-nav-wrap',
+							'items_wrap'      => '<h2 class="header-nav-heading h6">Site Navigation</h2><ul id="nav" class="header-nav">%3$s</ul><a href="#0" title="Close Menu" class="header-overlay-close close-mobile-menu">Close</a>',
+							'depth'             => 0,
+						))
+					?>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+<!-- Header end -->
+<?php
+        
+    }else{
+        
+    ?>
+
+
+    <!-- Header start -->
+    <header class="header-area style-02">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-3 col-md-3 col-6">
+                    <div class="logo-wrapper">
+						<?php
+								if($logo = $config['header_logo']){
+							?>
+
+							<a href="<?php echo site_url(); ?>" class="logo">
+								<img src="<?php echo $logo['url']; ?>" alt="">
+							</a>
+						<?php
+							}else{
+								echo "logo";
+							}
+						?>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9 col-6">
+                    <div class="header-content  d-flex justify-content-end">
+
+                        <a class="header-toggle-menu" href="#0" title="Menu"><i class="fa fa-bars"></i></a>
+
+                        <?php
+						wp_nav_menu(array(
+							'theme_location'    => 'main_menu',
+							'container'         => 'nav',
+							'container_class'   => 'header-nav-wrap',
+							'items_wrap'      => '<h2 class="header-nav-heading h6">Site Navigation</h2><ul id="nav" class="header-nav">%3$s</ul><a href="#0" title="Close Menu" class="header-overlay-close close-mobile-menu">Close</a>',
+							'depth'             => 0,
+						))
+					?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header end -->
+	
+<?php
+
+}
