@@ -1,0 +1,45 @@
+
+//student assign certificate programmatically by Arif
+function student_assign_certificate($userId, $courseId)
+{
+    global $wpdb;
+    //$user = wp_get_current_user();
+    //$user_id = $user->ID;
+    $user_id = $userId;
+    $newCourseId = $courseId;
+
+    $courses = $wpdb->get_results(apply_filters('wplms_usermeta_direct_query', $wpdb->prepare("
+    SELECT posts.ID as id, IF(meta.meta_value > %d,'active','expired') as status
+    FROM {$wpdb->posts} AS posts
+    LEFT JOIN {$wpdb->usermeta} AS meta ON posts.ID = meta.meta_key
+    WHERE   posts.post_type   = %s
+    AND   posts.post_status   = %s
+    AND   meta.user_id   = %d
+    ", time(), 'course', 'publish', $user_id)));
+
+    $userCertificates = $wpdb->get_row($wpdb->prepare("
+    SELECT * 
+    FROM wp_usermeta
+    WHERE meta_key = 'certificates' AND user_id = $user_id
+    "));
+
+    $unSerialData = unserialize($userCertificates->meta_value);
+
+    if (null == $userCertificates->meta_value) {
+        $userStaticCertificate = serialize($newCourseId);
+        $query = $wpdb->prepare("INSERT INTO wp_usermeta set user_id='$user_id',meta_key='certificates',meta_value='$userStaticCertificate'");
+        $wpdb->query($query);
+    } else {
+        foreach ($courses as $course) {
+            $course_id = $course->id;
+
+            $courseStatus = bp_course_get_user_course_status($user_id, $course_id);
+            if ($courseStatus == 4 && !in_array($newCourseId, $unSerialData)) {
+                array_push($unSerialData, $newCourseId);
+                $query = $wpdb->prepare("UPDATE wp_usermeta SET meta_value = %s WHERE user_id = %d AND meta_key = %s", serialize($unSerialData), $user_id, 'certificates');
+                $wpdb->query($query);
+            }
+        }
+    }
+}
+student_assign_certificate("45", "109");
